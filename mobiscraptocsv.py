@@ -10,13 +10,16 @@ from bs4 import BeautifulSoup
 import lxml
 import csv
 from itertools import zip_longest
+import time
 
 
 linkslist = []
 titleslist = []
 summerylist = []
 artcleslist = []
+datelist = []
 page_num = int(1)
+
 
 while True:
 
@@ -44,7 +47,9 @@ while True:
         summerylist.append(summury[i].text.strip())
         linkslist.append(titles[i].find('a').attrs['href'])
 
+
     page_num += 1
+
     print('page swithced')
 
 
@@ -56,17 +61,19 @@ for link in linkslist:
     div_container2 = soup.find("div" , class_='col-sm-8 content-column')
     article = div_container2.find("div", class_='entry-content clearfix single-post-content')
     artcleslist.append(article.text.strip())
+    dates = div_container2.find("time").attrs['title']
+    datelist.append(dates)
 
 
 
-file_list = [titleslist , linkslist , summerylist , artcleslist]
+file_list = [titleslist , linkslist , summerylist , artcleslist , datelist]
 exported = zip_longest(*file_list)
 
 
 
 with open("mobizil.csv" , 'w', encoding='utf-8-sig') as myfile:
     wr = csv.writer(myfile)
-    wr.writerow(["title" , "link" , 'summery' , "artice"])
+    wr.writerow(["title" , "link" , 'summery' , "artice" , 'date'])
     wr.writerows(exported)
 
 
